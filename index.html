@@ -1,0 +1,579 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manas Tiwari - Portfolio</title>
+
+    <!-- Favicon (will be updated dynamically) -->
+    <link id="favicon" rel="icon" type="image/png" href="">
+
+    <!-- Bootstrap CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+
+    <!-- Font Awesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <!-- Google Fonts: Playfair Display (Serif) & Poppins (Sans-serif) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* === Custom CSS - Light Theme with Font Mix === */
+        :root {
+            --primary-color: #0d6efd;
+            --secondary-color: #6c757d;
+            --light-color: #f8f9fa;
+            --dark-color: #212529;
+            --bg-light: #ffffff;
+            --card-bg: #ffffff;
+            --text-dark: #212529;
+            --text-muted-dark: #5a5a5a; /* Slightly darker muted text */
+            --border-color: #dee2e6;
+            --hover-shadow: rgba(0, 0, 0, 0.1);
+            --link-color: var(--primary-color);
+            --link-hover-color: #0a58ca;
+
+            /* Font Families */
+            --font-sans-serif: 'Poppins', sans-serif;
+            --font-serif: 'Playfair Display', serif;
+        }
+
+        body {
+            background-color: var(--light-color);
+            color: var(--text-dark);
+            font-family: var(--font-sans-serif); /* Default to sans-serif for body */
+            font-weight: 400; /* Default weight */
+            padding-top: 70px;
+            -webkit-font-smoothing: antialiased; /* Smoother font rendering */
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* --- Typography Adjustments --- */
+        h1, h2, h3, h4, h5, h6 {
+             color: var(--text-dark);
+        }
+
+        .navbar-brand,
+        .hero-section h1,
+        .hero-section h2,
+        .section-title {
+            font-family: var(--font-serif); /* Apply serif font to branding elements */
+        }
+
+        /* --- Navbar --- */
+        .navbar {
+            background-color: rgba(255, 255, 255, 0.95); /* Slightly less transparent */
+            backdrop-filter: blur(8px);
+            border-bottom: 1px solid var(--border-color);
+            box-shadow: 0 2px 4px rgba(0,0,0,.05);
+        }
+
+        .navbar-brand {
+            color: var(--text-dark) !important;
+            font-weight: 700; /* Bold serif */
+            font-size: 1.6rem; /* Slightly larger brand */
+            letter-spacing: 0.5px;
+        }
+         .navbar-brand:hover {
+              color: var(--primary-color) !important;
+         }
+
+        .nav-link {
+            color: var(--text-dark) !important;
+            font-weight: 500; /* Medium weight for nav links */
+            font-size: 0.95rem;
+        }
+        .nav-link:hover {
+             color: var(--primary-color) !important;
+        }
+        .navbar-toggler {
+             border-color: rgba(0,0,0,.1);
+        }
+        .navbar-toggler-icon {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(33, 37, 41, 0.75)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+        }
+
+        /* --- Hero Section --- */
+        .hero-section {
+            padding: 6rem 0;
+            text-align: center;
+            background-color: var(--bg-light);
+        }
+
+        .hero-section h1 {
+            font-size: 3.5rem; /* Larger main heading */
+            font-weight: 900; /* Heavy weight for impact */
+            margin-bottom: 0.75rem;
+            line-height: 1.2;
+        }
+
+        .hero-section h2 {
+            font-size: 1.75rem;
+            font-weight: 400; /* Regular weight serif */
+            color: var(--primary-color);
+            margin-bottom: 1.5rem; /* More space */
+            letter-spacing: 1px; /* Spacing for elegance */
+             font-style: italic; /* Add italic style to tagline */
+        }
+
+        .hero-section .lead {
+            color: var(--text-muted-dark);
+            max-width: 600px;
+            margin: 1rem auto 2.5rem; /* More space below lead */
+            font-size: 1.1rem;
+            line-height: 1.7;
+            font-weight: 300; /* Lighter weight lead */
+        }
+
+        .profile-img {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            border: 5px solid var(--primary-color); /* Thicker border */
+            margin-bottom: 2rem; /* More space */
+            object-fit: cover;
+            box-shadow: 0 5px 25px rgba(13, 110, 253, 0.25);
+        }
+
+        /* --- Sections & Cards --- */
+        .section-title {
+            text-align: center;
+            margin-top: 5rem; /* More vertical spacing */
+            margin-bottom: 3.5rem; /* More space below title */
+            font-weight: 700; /* Bold serif */
+            font-size: 2.5rem; /* Larger section titles */
+            position: relative;
+            padding-bottom: 1rem; /* More space for underline */
+            color: var(--text-dark);
+            letter-spacing: 0.5px;
+        }
+
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 80px; /* Wider underline */
+            height: 4px;
+            background-color: var(--primary-color);
+            margin: 0.75rem auto 0;
+            border-radius: 2px;
+        }
+
+        .repo-card, .project-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px; /* Slightly more rounded */
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05); /* Slightly more prominent base shadow */
+        }
+
+        .repo-card { cursor: pointer; }
+
+        .repo-card:hover, .project-card:hover {
+            transform: translateY(-10px); /* Lift more */
+            box-shadow: 0 15px 30px var(--hover-shadow);
+            border-color: var(--primary-color);
+        }
+
+        .card-body {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 1.5rem; /* More padding */
+        }
+
+        .card-title {
+            font-family: var(--font-sans-serif); /* Keep card titles sans-serif */
+            color: var(--text-dark);
+            font-weight: 600; /* Semibold */
+            margin-bottom: 0.75rem;
+            font-size: 1.15rem;
+        }
+        .card-title a {
+             color: var(--link-color);
+             text-decoration: none;
+             transition: color 0.2s ease;
+        }
+         .card-title a:hover {
+             color: var(--link-hover-color);
+             text-decoration: underline;
+         }
+          .card-title .fa-book-bookmark { /* Style icon in title */
+              color: var(--secondary-color);
+              margin-right: 8px;
+          }
+
+
+        .card-text {
+            color: var(--text-muted-dark);
+            font-size: 0.9rem;
+            flex-grow: 1;
+            margin-bottom: 1.25rem; /* More space before footer */
+            line-height: 1.6;
+             font-weight: 400; /* Regular weight */
+        }
+
+        .card-footer {
+            background-color: transparent;
+            border-top: 1px solid var(--border-color);
+            padding: 1rem 1.5rem; /* Match body padding */
+            margin-top: auto;
+        }
+
+        .repo-stats span, .repo-lang span {
+            margin-right: 15px;
+            font-size: 0.85rem;
+            color: var(--text-muted-dark);
+            font-weight: 500; /* Medium weight for stats */
+        }
+
+        .repo-stats i, .repo-lang i {
+            margin-right: 6px;
+            color: var(--secondary-color);
+            width: 1em; /* Ensure icons align better */
+            text-align: center;
+        }
+         .repo-stats .fa-star { color: #ffc107; }
+         .repo-stats .fa-code-fork { color: var(--secondary-color); }
+
+        .repo-lang .lang-circle {
+            display: inline-block;
+            width: 12px; /* Slightly bigger circle */
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 6px;
+            background-color: var(--secondary-color);
+            border: 1px solid rgba(0,0,0,0.1);
+            vertical-align: middle; /* Align better with text */
+        }
+
+        /* --- Footer --- */
+        .footer {
+            background-color: var(--bg-light);
+            color: var(--text-muted-dark);
+            padding: 2.5rem 0;
+            margin-top: 6rem;
+            text-align: center;
+            font-size: 0.9rem;
+            border-top: 1px solid var(--border-color);
+        }
+        .footer p {
+             margin-bottom: 0.5rem;
+             font-weight: 400;
+        }
+        .footer a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+        }
+         .footer a:hover {
+            text-decoration: underline;
+         }
+
+        /* --- Utility --- */
+         .loading-indicator, .error-indicator {
+             text-align: center;
+             padding: 4rem; /* More padding */
+             color: var(--text-muted-dark);
+             font-size: 1.2rem;
+         }
+         .error-indicator i { color: #dc3545; } /* Red icon for error */
+
+        /* --- Responsive adjustments --- */
+        @media (max-width: 992px) {
+             .hero-section h1 { font-size: 3rem; }
+             .section-title { font-size: 2.25rem; }
+        }
+        @media (max-width: 768px) {
+            .hero-section { padding: 5rem 0; }
+            .hero-section h1 { font-size: 2.75rem; }
+             .hero-section h2 { font-size: 1.5rem; }
+             .profile-img { width: 120px; height: 120px; margin-bottom: 1.5rem; border-width: 4px;}
+             .section-title { font-size: 2rem; margin-top: 4rem; margin-bottom: 3rem; }
+            body { padding-top: 60px; }
+        }
+         @media (max-width: 576px) {
+             .hero-section { padding: 4rem 0; }
+             .hero-section h1 { font-size: 2.25rem; }
+             .hero-section h2 { font-size: 1.3rem; }
+             .hero-section .lead { font-size: 1rem; }
+             .profile-img { width: 100px; height: 100px; }
+             .section-title { font-size: 1.8rem; }
+             .repo-stats span, .repo-lang span { margin-right: 10px; font-size: 0.8rem; }
+             .card-body { padding: 1.25rem; }
+             .card-footer { padding: 0.75rem 1.25rem; }
+             .footer { padding: 2rem 0; }
+         }
+
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="#" id="nav-username">tiwarimanas</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#repositories">Repositories</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#projects">Projects</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="https://github.com/tiwarimanas" target="_blank" rel="noopener noreferrer">
+                            <i class="fab fa-github"></i> GitHub
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <!-- === CUSTOMIZE SECTION START === -->
+            <img src="" alt="Manas Tiwari Profile Picture" class="profile-img" id="profile-pic"> <!-- Start with empty src -->
+            <h1 id="user-name">Manas Tiwari</h1>
+            <h2>Student | Learner | Developer</h2>
+            <p class="lead">
+                Welcome! Exploring the intersection of curiosity and code. Here you'll find my public projects and repositories from GitHub.
+                <!-- <<< REFINE YOUR BIO/INTRODUCTION HERE -->
+            </p>
+            <!-- === CUSTOMIZE SECTION END === -->
+            <a href="https://github.com/tiwarimanas" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-lg me-2">
+                <i class="fab fa-github"></i> View on GitHub
+            </a>
+             <a href="#repositories" class="btn btn-outline-secondary btn-lg">See Repositories</a>
+        </div>
+    </section>
+
+    <!-- Repositories Section -->
+    <section id="repositories" class="container">
+        <h2 class="section-title">Repositories</h2>
+        <div id="repo-list" class="row gy-4 gx-lg-5"> <!-- Added gx gutter for wider spacing on large screens -->
+            <!-- Loading Indicator -->
+            <div class="loading-indicator col-12">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <p class="mt-3">Fetching latest repositories...</p>
+            </div>
+            <!-- Repositories will be loaded here -->
+        </div>
+         <div class="text-center mt-5"> <!-- More margin-top -->
+              <a href="https://github.com/tiwarimanas?tab=repositories" target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary btn-lg"> <!-- Larger button -->
+                  View All Repositories <i class="fas fa-arrow-right ms-2"></i>
+              </a>
+         </div>
+    </section>
+
+    <!-- Featured Projects Section (Manual) -->
+    <section id="projects" class="container">
+        <h2 class="section-title">Featured Projects</h2>
+        <div id="projects-list" class="row gy-4 gx-lg-5">
+            <!-- === CUSTOMIZE SECTION START === -->
+             <div class="col-md-6 col-lg-4 d-flex align-items-stretch">
+                <div class="project-card card">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <a href="#" target="_blank" rel="noopener noreferrer"> <!-- <<< PROJECT LINK -->
+                                <i class="fas fa-star me-2 text-warning"></i> Awesome Project One <!-- <<< PROJECT NAME -->
+                            </a>
+                        </h5>
+                        <p class="card-text">
+                            A brief description of this standout project, highlighting its key features and technologies used. Maybe it solves a complex problem or showcases specific skills. <!-- <<< PROJECT DESCRIPTION -->
+                        </p>
+                    </div>
+                    <div class="card-footer repo-lang">
+                        <span> <!-- <<< PROJECT TECHNOLOGIES -->
+                            <i class="fas fa-layer-group"></i> Tech: React, Node.js, MongoDB
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-4 d-flex align-items-stretch">
+                <div class="project-card card">
+                     <div class="card-body">
+                         <h5 class="card-title">
+                            <a href="#" target="_blank" rel="noopener noreferrer"> <!-- <<< PROJECT LINK -->
+                                <i class="fas fa-lightbulb me-2 text-info"></i> Innovative Project Two <!-- <<< PROJECT NAME -->
+                            </a>
+                         </h5>
+                         <p class="card-text">
+                             Another cool project demonstrating different skills or technologies. Explain its purpose and impact concisely. <!-- <<< PROJECT DESCRIPTION -->
+                         </p>
+                     </div>
+                     <div class="card-footer repo-lang">
+                         <span> <!-- <<< PROJECT TECHNOLOGIES -->
+                             <i class="fas fa-layer-group"></i> Tech: Python, Django, PostgreSQL
+                         </span>
+                     </div>
+                </div>
+            </div>
+             <!-- Example Project 3 -->
+             <div class="col-md-6 col-lg-4 d-flex align-items-stretch">
+                 <div class="project-card card">
+                     <div class="card-body">
+                         <h5 class="card-title">
+                             <a href="#" target="_blank" rel="noopener noreferrer">
+                                 <i class="fas fa-cogs me-2 text-secondary"></i> Utility Project Three
+                             </a>
+                         </h5>
+                         <p class="card-text">
+                             Description for a third project, perhaps a useful tool or library you developed.
+                         </p>
+                     </div>
+                     <div class="card-footer repo-lang">
+                         <span>
+                              <i class="fas fa-layer-group"></i> Tech: Java, Spring Boot
+                         </span>
+                     </div>
+                 </div>
+             </div>
+            <!-- === CUSTOMIZE SECTION END === -->
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; <span id="current-year"></span> Manas Tiwari. All rights reserved.</p>
+            <p>Built with <i class="fas fa-code text-primary"></i> and <i class="fas fa-heart text-danger"></i> using Bootstrap, jQuery &amp; GitHub API.</p>
+             <a href="https://github.com/tiwarimanas/tiwarimanas.github.io" target="_blank" rel="noopener noreferrer">View Source on GitHub</a>
+        </div>
+    </footer>
+
+    <!-- jQuery CDN -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+
+    <!-- Bootstrap JS Bundle CDN (includes Popper) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+
+    <!-- Custom JavaScript -->
+    <script>
+        $(document).ready(function() {
+            // === Configuration ===
+            const githubUsername = "tiwarimanas";
+            const repoCount = 6; // Display 6 repos initially
+            const GITHUB_API_USER_URL = `https://api.github.com/users/${githubUsername}`;
+            const GITHUB_API_REPOS_URL = `https://api.github.com/users/${githubUsername}/repos?per_page=${repoCount}&sort=updated`;
+
+            // === Update Dynamic Elements ===
+            $('#current-year').text(new Date().getFullYear());
+
+             // === Fetch User Info ===
+             $.getJSON(GITHUB_API_USER_URL, function(userData) {
+                // Update Name
+                if(userData.name) {
+                    $('#user-name').text(userData.name);
+                } else {
+                     $('#user-name').text(userData.login); // Fallback to username
+                }
+                // Update Profile Picture and Favicon
+                 if(userData.avatar_url) {
+                     $('#profile-pic').attr('src', userData.avatar_url);
+                     $('#favicon').attr('href', userData.avatar_url); // <-- UPDATE FAVICON HREF
+                 } else {
+                     // Optional: Provide a fallback image/favicon if avatar_url is missing
+                     // $('#profile-pic').attr('src', 'path/to/default/avatar.png');
+                     // $('#favicon').attr('href', 'path/to/default/favicon.png');
+                 }
+             }).fail(function(jqXHR, textStatus, errorThrown) {
+                 console.error("Failed to fetch user data:", textStatus, errorThrown);
+                 // Could set default name/pic/favicon here as well if desired
+                 $('#user-name').text(githubUsername); // Fallback to username if API fails
+             });
+
+            // === Fetch Repositories ===
+            const $repoList = $('#repo-list');
+            const $loadingIndicator = $repoList.find('.loading-indicator');
+
+            $.getJSON(GITHUB_API_REPOS_URL, function(repos) {
+                $loadingIndicator.remove();
+
+                if (!repos || repos.length === 0) {
+                    $repoList.html('<p class="col-12 error-indicator">No public repositories found.</p>');
+                    return;
+                }
+
+                repos.forEach(function(repo) {
+                    const repoCard = `
+                        <div class="col-md-6 col-lg-4 d-flex align-items-stretch">
+                            <div class="repo-card card w-100" data-repo-url="${repo.html_url}">
+                                <div class="card-body">
+                                    <h5 class="card-title">
+                                        <a href="${repo.html_url}" target="_blank" rel="noopener noreferrer" title="${repo.name}">
+                                            <i class="fas fa-book-bookmark"></i>
+                                            ${repo.name}
+                                        </a>
+                                    </h5>
+                                    <p class="card-text">${repo.description || 'No description provided.'}</p>
+                                </div>
+                                <div class="card-footer">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div class="repo-stats">
+                                            <span><i class="fas fa-star"></i> ${repo.stargazers_count}</span>
+                                            <span><i class="fas fa-code-fork"></i> ${repo.forks_count}</span>
+                                        </div>
+                                        ${repo.language ? `<div class="repo-lang"><span><span class="lang-circle" style="background-color: ${getLanguageColor(repo.language)};"></span> ${repo.language}</span></div>` : ''}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>`;
+                    $repoList.append(repoCard);
+                });
+
+            }).fail(function(jqXHR, textStatus, errorThrown) {
+                console.error("Failed to fetch repositories:", textStatus, errorThrown);
+                $loadingIndicator.remove();
+                let errorMessage = "Could not load repositories. ";
+                 if (jqXHR.status === 403) {
+                     errorMessage += "API rate limit likely exceeded. Please try again later.";
+                 } else {
+                     errorMessage += "Check the browser console for more details.";
+                 }
+                 $repoList.html(`<p class="col-12 error-indicator"><i class="fas fa-exclamation-triangle me-2"></i> ${errorMessage}</p>`);
+            });
+
+            // === Make Repo Cards Clickable (Event Delegation) ===
+            $repoList.on('click', '.repo-card', function(event) {
+                if ($(event.target).closest('a').length > 0) {
+                    return;
+                }
+                const repoUrl = $(this).data('repo-url');
+                if (repoUrl) {
+                    window.open(repoUrl, '_blank');
+                }
+            });
+
+            // === Helper Function for Language Colors ===
+             function getLanguageColor(language) {
+                const colors = {
+                     "JavaScript": "#f1e05a", "HTML": "#e34c26", "CSS": "#563d7c",
+                     "Python": "#3572A5", "Java": "#b07219", "TypeScript": "#3178c6",
+                     "C#": "#178600", "PHP": "#4F5D95", "C++": "#f34b7d", "C": "#555555",
+                     "Shell": "#89e051", "Ruby": "#701516", "Go": "#00ADD8", "Kotlin": "#A97BFF",
+                     "Swift": "#F05138", "Vue": "#41b883", "Jupyter Notebook": "#DA5B0B",
+                     "Dart": "#00B4AB", "SCSS": "#c6538c", "Rust": "#dea584",
+                 };
+                 return colors[language] || '#6c757d'; // Default grey
+             }
+
+        }); // End document ready
+    </script>
+
+</body>
+</html>
