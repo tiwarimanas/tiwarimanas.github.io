@@ -3,27 +3,69 @@ layout: default
 title: Home
 ---
 
-<section id="about">
-    <h2>Hello, I'm Manas.</h2>
-    <p>Welcome to my personal page. I write code and share my thoughts here.</p>
+<section class="intro">
+    <p>Hello. I'm Manas Tiwari. I write code and sometimes thoughts.</p>
 </section>
 
 <section id="blog">
-    <h2>From /me</h2>
-    <ul class="blog-list">
+    <h2>Writing</h2>
+    <ul class="post-list">
         {% for post in site.me %}
-        <li class="blog-item">
-            <span class="blog-date">{{ post.date | date: "%Y-%m-%d" }}</span>
-            <a href="{{ post.url }}" class="blog-title">{{ post.title }}</a>
+        <li>
+            <a class="post-link" href="{{ post.url | relative_url }}">{{ post.title }}</a>
+            <span class="post-meta">{{ post.date | date: "%B %d, %Y" }}</span>
+            {% if post.excerpt %}
+            <p>{{ post.excerpt | strip_html | truncatewords: 20 }}</p>
+            {% endif %}
         </li>
         {% endfor %}
     </ul>
-    {% if site.me.size == 0 %}
-    <p>No posts found. Add markdown files to the /me folder.</p>
-    {% endif %}
 </section>
 
-<section id="projects">
-    <h2>Projects</h2>
-    <div id="repo-grid">Loading repositories...</div>
+<section id="repos">
+    <h2>Code</h2>
+    <div id="repo-list">
+        <p>Loading repositories...</p>
+    </div>
 </section>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const username = 'tiwarimanas';
+        const repoContainer = document.getElementById('repo-list');
+
+        fetch(`https://api.github.com/users/${username}/repos?sort=updated&per_page=100`)
+            .then(response => response.json())
+            .then(data => {
+                // Filter out forks and sort by stars (descending)
+                const repos = data
+                    .filter(repo => !repo.fork)
+                    .sort((a, b) => b.stargazers_count - a.stargazers_count)
+                    .slice(0, 6); // Take top 6
+
+                if (repos.length === 0) {
+                    repoContainer.innerHTML = '<p>No repositories found.</p>';
+                    return;
+                }
+
+                let html = '';
+                repos.forEach(repo => {
+                    html += `
+                        <div class="repo-card">
+                            <h3 class="repo-name"><a href="${repo.html_url}" target="_blank">${repo.name}</a></h3>
+                            <p class="repo-desc">${repo.description || 'No description provided.'}</p>
+                            <div class="repo-stats">
+                                <span>★ ${repo.stargazers_count}</span>
+                                <span>${repo.language || 'Text'}</span>
+                            </div>
+                        </div>
+                    `;
+                });
+                repoContainer.innerHTML = html;
+            })
+            .catch(error => {
+                console.error('Error fetching repos:', error);
+                repoContainer.innerHTML = '<p>Failed to load repositories.</p>';
+            });
+    });
+</script>

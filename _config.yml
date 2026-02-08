@@ -1,14 +1,11 @@
 title: Manas Tiwari
-description: Developer & Writer
+description: Personal website and blog
 url: "https://tiwarimanas.github.io"
-theme: null
-
-# Define the custom collection for the blog
 collections:
   me:
     output: true
-    permalink: /blog/:path/
-
+    permalink: /me/:path/
 markdown: kramdown
+theme: null
 plugins:
-  - jekyll-feed
+  - jekyll-seo-tag
