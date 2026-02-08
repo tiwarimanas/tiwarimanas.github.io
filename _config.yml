@@ -1,0 +1,14 @@
+title: Manas Tiwari
+description: Developer & Writer
+url: "https://tiwarimanas.github.io"
+theme: null
+
+# Define the custom collection for the blog
+collections:
+  me:
+    output: true
+    permalink: /blog/:path/
+
+markdown: kramdown
+plugins:
+  - jekyll-feed
