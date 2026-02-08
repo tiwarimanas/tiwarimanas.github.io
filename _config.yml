@@ -5,7 +5,15 @@ collections:
   me:
     output: true
     permalink: /me/:path/
+defaults:
+  - scope:
+      path: ""
+      type: "me"
+    values:
+      layout: "post"
 markdown: kramdown
+kramdown:
+  math_engine: mathjax
 theme: null
 plugins:
   - jekyll-seo-tag
