@@ -1,160 +1,171 @@
-const MarkdownParser = (() => {
-    'use strict';
+var MarkdownParser = (function() {
+    "use strict";
+
+    function esc(s) {
+        if (!s) return "";
+        return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;");
+    }
+
+    function inline(t) {
+        if (!t) return "";
+        // Preserve math before other processing
+        // Inline math: $...$
+        t = t.replace(/\$\$(.+?)\$\$/g, '<span class="math-block" data-math="$$$$1$$">$$$$1$$</span>');
+        t = t.replace(/\$([^\$\n]+?)\$/g, '<span class="math-inline" data-math="$$$1$">$$$1$</span>');
+        // Images
+        t = t.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1" loading="lazy">');
+        // Links
+        t = t.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+        // Code
+        t = t.replace(/`([^`]+)`/g, function(m, c) { return "<code>" + esc(c) + "</code>"; });
+        // Bold+italic
+        t = t.replace(/\*{3}(.+?)\*{3}/g, "<strong><em>$1</em></strong>");
+        t = t.replace(/_{3}(.+?)_{3}/g, "<strong><em>$1</em></strong>");
+        // Bold
+        t = t.replace(/\*{2}(.+?)\*{2}/g, "<strong>$1</strong>");
+        t = t.replace(/_{2}(.+?)_{2}/g, "<strong>$1</strong>");
+        // Italic
+        t = t.replace(/\*(.+?)\*/g, "<em>$1</em>");
+        t = t.replace(/(?<!\w)_(.+?)_(?!\w)/g, "<em>$1</em>");
+        return t;
+    }
 
     function parse(md) {
-        if (!md) return '';
-        const lines = md.split('\n');
-        const html = [];
-        let inCodeBlock = false;
-        let codeBlockContent = [];
-        let codeBlockLang = '';
-        let inList = false;
-        let listType = '';
-        let listItems = [];
+        if (!md) return "";
+        var lines = md.split("\n");
+        var out = [];
+        var inCode = false, codeLines = [], codeLang = "";
+        var inList = false, listTag = "", listItems = [];
+        var inMathBlock = false, mathLines = [];
 
         function flushList() {
             if (!inList) return;
-            const tag = listType === 'ul' ? 'ul' : 'ol';
-            html.push('<' + tag + '>');
-            listItems.forEach(item => {
-                html.push('<li>' + inlineFormat(item) + '</li>');
-            });
-            html.push('</' + tag + '>');
-            inList = false;
-            listItems = [];
-            listType = '';
+            out.push("<" + listTag + ">");
+            for (var i = 0; i < listItems.length; i++) out.push("<li>" + inline(listItems[i]) + "</li>");
+            out.push("</" + listTag + ">");
+            inList = false; listItems = []; listTag = "";
         }
 
-        for (let i = 0; i < lines.length; i++) {
-            const line = lines[i];
+        for (var i = 0; i < lines.length; i++) {
+            var line = lines[i];
+            var trimmed = line.trim();
 
-            if (line.trimStart().startsWith('```')) {
-                if (!inCodeBlock) {
+            // Math block ($$...$$)
+            if (trimmed === "$$") {
+                if (!inMathBlock) {
                     flushList();
-                    inCodeBlock = true;
-                    codeBlockLang = line.trim().slice(3).trim();
-                    codeBlockContent = [];
+                    inMathBlock = true;
+                    mathLines = [];
                 } else {
-                    const langAttr = codeBlockLang ? ' class="language-' + escapeHtml(codeBlockLang) + '"' : '';
-                    html.push('<pre><code' + langAttr + '>' + escapeHtml(codeBlockContent.join('\n')) + '</code></pre>');
-                    inCodeBlock = false;
-                    codeBlockContent = [];
-                    codeBlockLang = '';
+                    var mathContent = mathLines.join("\n");
+                    out.push('<div class="math-block" data-math="$$' + esc(mathContent) + '$$">$$' + esc(mathContent) + '$$</div>');
+                    inMathBlock = false;
+                    mathLines = [];
                 }
                 continue;
             }
+            if (inMathBlock) { mathLines.push(line); continue; }
 
-            if (inCodeBlock) { codeBlockContent.push(line); continue; }
-            if (line.trim() === '') { flushList(); continue; }
-            if (/^(-{3,}|_{3,}|\*{3,})$/.test(line.trim())) { flushList(); html.push('<hr>'); continue; }
+            // Code fence
+            if (trimmed.indexOf("```") === 0) {
+                if (!inCode) {
+                    flushList(); inCode = true;
+                    codeLang = trimmed.slice(3).trim(); codeLines = [];
+                } else {
+                    var attr = codeLang ? ' class="language-' + esc(codeLang) + '"' : "";
+                    out.push("<pre><code" + attr + ">" + esc(codeLines.join("\n")) + "</code></pre>");
+                    inCode = false; codeLines = []; codeLang = "";
+                }
+                continue;
+            }
+            if (inCode) { codeLines.push(line); continue; }
 
-            const headingMatch = line.match(/^(#{1,6})\s+(.+)/);
-            if (headingMatch) {
+            if (trimmed === "") { flushList(); continue; }
+            if (/^(-{3,}|_{3,}|\*{3,})$/.test(trimmed)) { flushList(); out.push("<hr>"); continue; }
+
+            var hM = line.match(/^(#{1,6})\s+(.+)/);
+            if (hM) {
                 flushList();
-                const level = headingMatch[1].length;
-                const text = headingMatch[2].replace(/\s*#{1,6}\s*$/, '');
-                html.push('<h' + level + '>' + inlineFormat(text) + '</h' + level + '>');
+                var lvl = hM[1].length;
+                var hText = hM[2].replace(/\s*#{1,6}\s*$/, "");
+                out.push("<h" + lvl + ">" + inline(hText) + "</h" + lvl + ">");
                 continue;
             }
 
-            if (line.trimStart().startsWith('> ')) {
+            if (trimmed.indexOf(">") === 0) {
                 flushList();
-                const quoteText = line.replace(/^>\s?/, '');
-                html.push('<blockquote><p>' + inlineFormat(quoteText) + '</p></blockquote>');
+                var qText = line.replace(/^>\s?/, "");
+                out.push("<blockquote><p>" + inline(qText) + "</p></blockquote>");
                 continue;
             }
 
-            const ulMatch = line.match(/^(\s*)[*\-+]\s+(.+)/);
-            if (ulMatch) {
-                if (!inList || listType !== 'ul') { flushList(); inList = true; listType = 'ul'; }
-                listItems.push(ulMatch[2]);
-                continue;
+            var ulM = line.match(/^\s*[*\-+]\s+(.+)/);
+            if (ulM) {
+                if (!inList || listTag !== "ul") { flushList(); inList = true; listTag = "ul"; }
+                listItems.push(ulM[1]); continue;
             }
 
-            const olMatch = line.match(/^(\s*)\d+\.\s+(.+)/);
-            if (olMatch) {
-                if (!inList || listType !== 'ol') { flushList(); inList = true; listType = 'ol'; }
-                listItems.push(olMatch[2]);
-                continue;
+            var olM = line.match(/^\s*\d+\.\s+(.+)/);
+            if (olM) {
+                if (!inList || listTag !== "ol") { flushList(); inList = true; listTag = "ol"; }
+                listItems.push(olM[1]); continue;
             }
 
             flushList();
-            html.push('<p>' + inlineFormat(line) + '</p>');
+            out.push("<p>" + inline(line) + "</p>");
         }
 
         flushList();
-        if (inCodeBlock) {
-            html.push('<pre><code>' + escapeHtml(codeBlockContent.join('\n')) + '</code></pre>');
-        }
-        return html.join('\n');
-    }
+        if (inCode) out.push("<pre><code>" + esc(codeLines.join("\n")) + "</code></pre>");
+        if (inMathBlock) out.push('<div class="math-block" data-math="$$' + esc(mathLines.join("\n")) + '$$">$$' + esc(mathLines.join("\n")) + '$$</div>');
 
-    function inlineFormat(text) {
-        text = text.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1" loading="lazy">');
-        text = text.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
-        text = text.replace(/`([^`]+)`/g, '<code>$1</code>');
-        text = text.replace(/\*{3}(.+?)\*{3}/g, '<strong><em>$1</em></strong>');
-        text = text.replace(/_{3}(.+?)_{3}/g, '<strong><em>$1</em></strong>');
-        text = text.replace(/\*{2}(.+?)\*{2}/g, '<strong>$1</strong>');
-        text = text.replace(/_{2}(.+?)_{2}/g, '<strong>$1</strong>');
-        text = text.replace(/\*(.+?)\*/g, '<em>$1</em>');
-        text = text.replace(/(?<!\w)_(.+?)_(?!\w)/g, '<em>$1</em>');
-        return text;
-    }
-
-    function escapeHtml(str) {
-        const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
-        return str.replace(/[&<>"']/g, c => map[c]);
+        return out.join("\n");
     }
 
     function extractFrontMatter(md) {
-        const meta = {};
-        let content = md;
-        const fmMatch = md.match(/^---\s*\n([\s\S]*?)\n---\s*\n([\s\S]*)$/);
-        if (fmMatch) {
-            const fmBlock = fmMatch[1];
-            content = fmMatch[2];
-            fmBlock.split('\n').forEach(line => {
-                const kv = line.match(/^(\w[\w\s-]*?):\s*(.+)$/);
+        var meta = {}, content = md || "";
+        if (!md) return { meta: meta, content: content };
+        var m = md.match(/^---[ \t]*\n([\s\S]*?)\n---[ \t]*\n([\s\S]*)$/);
+        if (m) {
+            content = m[2];
+            var fmLines = m[1].split("\n");
+            for (var i = 0; i < fmLines.length; i++) {
+                var kv = fmLines[i].match(/^([A-Za-z_][\w\s-]*?):\s*(.+)$/);
                 if (kv) {
-                    const key = kv[1].trim().toLowerCase().replace(/\s+/g, '_');
-                    let val = kv[2].trim();
-                    if ((val.startsWith('"') && val.endsWith('"')) || (val.startsWith("'") && val.endsWith("'"))) {
-                        val = val.slice(1, -1);
-                    }
+                    var key = kv[1].trim().toLowerCase().replace(/\s+/g, "_");
+                    var val = kv[2].trim();
+                    if ((val.charAt(0) === '"' && val.charAt(val.length-1) === '"') ||
+                        (val.charAt(0) === "'" && val.charAt(val.length-1) === "'"))
+                        val = val.slice(1,-1);
                     meta[key] = val;
                 }
-            });
+            }
         }
-        return { meta, content };
+        return { meta: meta, content: content };
     }
 
     function readingTime(text) {
-        const words = text.trim().split(/\s+/).length;
-        const minutes = Math.max(1, Math.round(words / 220));
-        return minutes + ' min read';
+        if (!text) return "1 min read";
+        var words = text.trim().split(/\s+/).length;
+        return Math.max(1, Math.round(words / 220)) + " min read";
     }
 
-    function excerpt(md, maxLength) {
-        maxLength = maxLength || 160;
-        const { content } = extractFrontMatter(md);
-        const lines = content.split('\n');
-        for (const line of lines) {
-            const trimmed = line.trim();
-            if (trimmed && !trimmed.startsWith('#') && !trimmed.startsWith('```') &&
-                !trimmed.startsWith('>') && !trimmed.startsWith('-') &&
-                !trimmed.startsWith('*') && !trimmed.startsWith('![')) {
-                let clean = trimmed
-                    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
-                    .replace(/[*_`]/g, '');
-                if (clean.length > maxLength) {
-                    clean = clean.substring(0, maxLength).replace(/\s\S*$/, '') + '...';
-                }
+    function excerpt(md, maxLen) {
+        maxLen = maxLen || 150;
+        var p = extractFrontMatter(md);
+        var lines = p.content.split("\n");
+        for (var i = 0; i < lines.length; i++) {
+            var t = lines[i].trim();
+            if (t && t.charAt(0) !== "#" && t.indexOf("```") !== 0 &&
+                t.charAt(0) !== ">" && t.charAt(0) !== "-" &&
+                t.charAt(0) !== "*" && t.indexOf("![") !== 0 && t !== "$$") {
+                var clean = t.replace(/\[([^\]]+)\]\([^)]+\)/g,"$1").replace(/[*_`$]/g,"");
+                if (clean.length > maxLen) clean = clean.substring(0, maxLen).replace(/\s\S*$/,"") + "...";
                 return clean;
             }
         }
-        return '';
+        return "";
     }
 
-    return { parse, extractFrontMatter, readingTime, excerpt };
+    return { parse: parse, extractFrontMatter: extractFrontMatter, readingTime: readingTime, excerpt: excerpt };
 })();

@@ -23,8 +23,6 @@ I'll write about things that interest me:
 
 This blog is deliberately simple. Markdown files in a folder, rendered by a handful of JavaScript functions. No build steps, no frameworks, no dependencies. Just words on a page.
 
-There's something satisfying about that.
-
 ```javascript
 const greeting = "Hello, World";
 console.log(greeting);

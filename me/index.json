@@ -11,6 +11,12 @@
             "slug": "on-building-things",
             "title": "On Building Things",
             "date": "2025-02-01"
+        },
+        {
+            "file": "math-and-code.md",
+            "slug": "math-and-code",
+            "title": "Where Math Meets Code",
+            "date": "2025-03-10"
         }
     ]
 }
