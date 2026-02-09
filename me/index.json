@@ -1,0 +1,16 @@
+{
+    "posts": [
+        {
+            "file": "hello-world.md",
+            "slug": "hello-world",
+            "title": "Hello, World",
+            "date": "2025-01-15"
+        },
+        {
+            "file": "on-building-things.md",
+            "slug": "on-building-things",
+            "title": "On Building Things",
+            "date": "2025-02-01"
+        }
+    ]
+}
