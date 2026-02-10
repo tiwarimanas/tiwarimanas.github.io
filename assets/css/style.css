@@ -264,3 +264,350 @@ input,select{font-family:inherit}
 
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--text);color:var(--text-inv);padding:12px 24px;border-radius:var(--rad-lg);font-size:var(--fs-sm);font-weight:500;box-shadow:var(--shadow-lg);z-index:10000;transition:transform var(--dur-base) var(--ease-spring),opacity var(--dur-base);opacity:0;pointer-events:none}
 .toast.show{transform:translateX(-50%) translateY(0);opacity:1;pointer-events:all}
+
+/* =============================================
+   MATH BLOCKS — Standout styling
+   ============================================= */
+.prose .katex-display {
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: var(--space-xl) var(--space-xl);
+    margin: var(--space-xl) 0;
+    background: linear-gradient(135deg, rgba(139,94,60,0.04), rgba(183,122,75,0.06));
+    border: 1px solid rgba(139,94,60,0.1);
+    border-radius: var(--rad-lg);
+    position: relative;
+}
+.prose .katex-display::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 3px;
+    height: 100%;
+    background: linear-gradient(to bottom, var(--accent), #B87A4B);
+    border-radius: var(--rad-lg) 0 0 var(--rad-lg);
+}
+.prose .katex-display > .katex {
+    padding: var(--space-sm) 0;
+}
+
+/* Inline math subtle highlight */
+.prose .katex:not(.katex-display .katex) {
+    padding: 1px 4px;
+    background: rgba(139,94,60,0.05);
+    border-radius: 3px;
+}
+
+/* =============================================
+   CODE BLOCKS — Syntax theme + Copy button
+   ============================================= */
+
+/* Override Prism's default theme with our custom dark theme */
+.prose pre[class*="language-"],
+.prose code[class*="language-"] {
+    font-family: var(--mono) !important;
+    font-size: var(--fs-sm) !important;
+    line-height: 1.7 !important;
+    text-shadow: none !important;
+}
+
+.prose pre[class*="language-"] {
+    background: #1a1b26 !important;
+    border: 1px solid rgba(255,255,255,0.06) !important;
+    border-radius: var(--rad-lg) !important;
+    padding: 0 !important;
+    margin: var(--space-xl) 0 !important;
+    box-shadow: var(--shadow-lg) !important;
+    overflow: hidden !important;
+    position: relative !important;
+}
+
+/* Code block header with language label + copy button */
+.code-block-wrapper {
+    position: relative;
+    margin: var(--space-xl) 0;
+}
+
+.code-block-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 16px;
+    background: #13141c;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    border-radius: var(--rad-lg) var(--rad-lg) 0 0;
+}
+
+.code-lang-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 2px 10px;
+    border-radius: 999px;
+    color: #fff;
+    background: rgba(255,255,255,0.1);
+}
+
+/* Language-specific colors */
+.code-lang-label[data-lang="javascript"],
+.code-lang-label[data-lang="js"] {
+    background: rgba(241,224,90,0.2);
+    color: #F1E05A;
+}
+.code-lang-label[data-lang="typescript"],
+.code-lang-label[data-lang="ts"] {
+    background: rgba(49,120,198,0.2);
+    color: #6BB5F6;
+}
+.code-lang-label[data-lang="python"],
+.code-lang-label[data-lang="py"] {
+    background: rgba(53,114,165,0.2);
+    color: #6FA8DC;
+}
+.code-lang-label[data-lang="java"] {
+    background: rgba(176,114,25,0.2);
+    color: #E8A33D;
+}
+.code-lang-label[data-lang="c"] {
+    background: rgba(85,85,85,0.3);
+    color: #A8B1C2;
+}
+.code-lang-label[data-lang="cpp"],
+.code-lang-label[data-lang="c++"] {
+    background: rgba(243,75,125,0.2);
+    color: #F47FA4;
+}
+.code-lang-label[data-lang="rust"],
+.code-lang-label[data-lang="rs"] {
+    background: rgba(222,165,132,0.2);
+    color: #DEA584;
+}
+.code-lang-label[data-lang="go"] {
+    background: rgba(0,173,216,0.2);
+    color: #56D6F5;
+}
+.code-lang-label[data-lang="ruby"],
+.code-lang-label[data-lang="rb"] {
+    background: rgba(112,21,22,0.3);
+    color: #E76F6F;
+}
+.code-lang-label[data-lang="html"] {
+    background: rgba(227,76,38,0.2);
+    color: #E8845C;
+}
+.code-lang-label[data-lang="css"] {
+    background: rgba(86,61,124,0.2);
+    color: #A78BDB;
+}
+.code-lang-label[data-lang="scss"],
+.code-lang-label[data-lang="sass"] {
+    background: rgba(198,83,140,0.2);
+    color: #D98AB5;
+}
+.code-lang-label[data-lang="bash"],
+.code-lang-label[data-lang="shell"],
+.code-lang-label[data-lang="sh"],
+.code-lang-label[data-lang="zsh"] {
+    background: rgba(137,224,81,0.15);
+    color: #A0D96A;
+}
+.code-lang-label[data-lang="json"] {
+    background: rgba(255,255,255,0.08);
+    color: #BFC9D4;
+}
+.code-lang-label[data-lang="yaml"],
+.code-lang-label[data-lang="yml"] {
+    background: rgba(255,255,255,0.08);
+    color: #E8D5A3;
+}
+.code-lang-label[data-lang="sql"] {
+    background: rgba(0,128,255,0.15);
+    color: #72B8F5;
+}
+.code-lang-label[data-lang="swift"] {
+    background: rgba(240,81,56,0.2);
+    color: #F58D78;
+}
+.code-lang-label[data-lang="kotlin"],
+.code-lang-label[data-lang="kt"] {
+    background: rgba(169,123,255,0.2);
+    color: #C1A4FF;
+}
+.code-lang-label[data-lang="php"] {
+    background: rgba(79,93,149,0.2);
+    color: #8E9CD8;
+}
+.code-lang-label[data-lang="r"] {
+    background: rgba(25,140,231,0.2);
+    color: #6BB5F6;
+}
+.code-lang-label[data-lang="dart"] {
+    background: rgba(0,180,171,0.2);
+    color: #56D6CF;
+}
+.code-lang-label[data-lang="lua"] {
+    background: rgba(0,0,128,0.2);
+    color: #7878D8;
+}
+.code-lang-label[data-lang="markdown"],
+.code-lang-label[data-lang="md"] {
+    background: rgba(255,255,255,0.08);
+    color: #BFC9D4;
+}
+.code-lang-label[data-lang="dockerfile"],
+.code-lang-label[data-lang="docker"] {
+    background: rgba(56,77,84,0.3);
+    color: #6CBBDB;
+}
+.code-lang-label[data-lang="xml"] {
+    background: rgba(255,255,255,0.08);
+    color: #BFC9D4;
+}
+.code-lang-label[data-lang="graphql"],
+.code-lang-label[data-lang="gql"] {
+    background: rgba(229,53,171,0.15);
+    color: #E876C3;
+}
+.code-lang-label[data-lang="elixir"],
+.code-lang-label[data-lang="ex"] {
+    background: rgba(110,74,126,0.25);
+    color: #B98FCC;
+}
+
+/* Copy button */
+.code-copy-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 12px;
+    font-family: var(--sans);
+    font-size: 11px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.5);
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: var(--rad-sm);
+    cursor: pointer;
+    transition: all var(--dur-fast) var(--ease-out);
+    letter-spacing: 0.02em;
+}
+.code-copy-btn:hover {
+    color: rgba(255,255,255,0.9);
+    background: rgba(255,255,255,0.12);
+    border-color: rgba(255,255,255,0.15);
+}
+.code-copy-btn.copied {
+    color: #4ADE80;
+    border-color: rgba(74,222,128,0.3);
+    background: rgba(74,222,128,0.1);
+}
+.code-copy-btn svg {
+    width: 13px;
+    height: 13px;
+    flex-shrink: 0;
+}
+
+/* Code inside the wrapper — reset margins */
+.code-block-wrapper pre[class*="language-"] {
+    margin: 0 !important;
+    border-radius: 0 0 var(--rad-lg) var(--rad-lg) !important;
+    border-top: none !important;
+}
+
+/* Prism code padding */
+.code-block-wrapper pre[class*="language-"] code {
+    display: block;
+    padding: var(--space-lg) !important;
+    overflow-x: auto;
+}
+
+/* =============================================
+   CUSTOM PRISM DARK THEME (Tokyo Night inspired)
+   ============================================= */
+.token.comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+    color: #565f89;
+    font-style: italic;
+}
+.token.punctuation {
+    color: #9aa5ce;
+}
+.token.namespace {
+    opacity: 0.8;
+}
+.token.property,
+.token.tag,
+.token.boolean,
+.token.number,
+.token.constant,
+.token.symbol,
+.token.deleted {
+    color: #ff9e64;
+}
+.token.selector,
+.token.attr-name,
+.token.string,
+.token.char,
+.token.builtin,
+.token.inserted {
+    color: #9ece6a;
+}
+.token.operator,
+.token.entity,
+.token.url,
+.language-css .token.string,
+.style .token.string {
+    color: #89ddff;
+}
+.token.atrule,
+.token.attr-value,
+.token.keyword {
+    color: #bb9af7;
+}
+.token.function,
+.token.class-name {
+    color: #7aa2f7;
+}
+.token.regex,
+.token.important,
+.token.variable {
+    color: #e0af68;
+}
+.token.important,
+.token.bold {
+    font-weight: 600;
+}
+.token.italic {
+    font-style: italic;
+}
+.token.entity {
+    cursor: help;
+}
+
+/* Line numbers gutter look (subtle) */
+.line-numbers .line-numbers-rows {
+    border-right: 1px solid rgba(255,255,255,0.06);
+}
+.line-numbers .line-numbers-rows > span::before {
+    color: rgba(255,255,255,0.15);
+}
+
+/* Scrollbar inside code blocks */
+.prose pre::-webkit-scrollbar {
+    height: 6px;
+}
+.prose pre::-webkit-scrollbar-track {
+    background: transparent;
+}
+.prose pre::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.12);
+    border-radius: 3px;
+}
+.prose pre::-webkit-scrollbar-thumb:hover {
+    background: rgba(255,255,255,0.2);
+}
