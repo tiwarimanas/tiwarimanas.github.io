@@ -1,0 +1,57 @@
+---
+layout: default
+---
+
+<div class="post-page">
+
+    <!-- TOOLBAR -->
+    <div class="post-toolbar">
+        <a href="{{ '/' | relative_url }}#blog" class="post-back">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+            All posts
+        </a>
+        <div class="toolbar-actions">
+            <button class="tb-btn" id="btn-tts" title="Listen to this post">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+                Listen
+            </button>
+            <span class="tb-sep"></span>
+            <button class="tb-btn" id="btn-pdf" title="Download as PDF">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                PDF
+            </button>
+            <span class="tb-sep"></span>
+            <button class="tb-btn" id="btn-twitter" title="Share on Twitter/X">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4l11.733 16h4.267l-11.733 -16z"/><path d="M4 20l6.768 -6.768m2.46 -2.46l6.772 -6.772"/></svg>
+                Twitter
+            </button>
+            <button class="tb-btn" id="btn-linkedin" title="Share on LinkedIn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+                LinkedIn
+            </button>
+            <button class="tb-btn" id="btn-instagram" title="Copy link for Instagram">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+                Instagram
+            </button>
+            <button class="tb-btn" id="btn-copy" title="Copy link">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                Copy
+            </button>
+        </div>
+    </div>
+
+    <!-- ARTICLE -->
+    <article id="post-article">
+        <header class="post-header">
+            <h1 class="post-title" id="post-title">{{ page.title }}</h1>
+            <div class="post-meta">
+                <time class="post-date" id="post-date">{{ page.date | date: "%B %d, %Y" }}</time>
+                <span class="post-rt" id="post-rt">{% assign words = page.content | number_of_words %}{% assign mins = words | divided_by: 220 %}{% if mins < 1 %}1{% else %}{{ mins }}{% endif %} min read</span>
+            </div>
+        </header>
+        <div class="prose" id="post-content">
+            {{ content }}
+        </div>
+    </article>
+
+</div>

@@ -1,0 +1,120 @@
+---
+layout: default
+---
+
+<main class="main">
+
+    <!-- HOME -->
+    <section id="home" class="section active">
+        <div class="hero">
+            <div class="hero-badge animate-fade-up">
+                <span class="hero-badge-dot"></span>
+                Available for collaboration
+            </div>
+            <h1 class="hero-title animate-fade-up delay-1">
+                Hi, I'm <span class="hero-title-accent">Manas Tiwari</span>
+            </h1>
+            <p class="hero-sub animate-fade-up delay-2">
+                I build things for the web and beyond. Interested in clean code,
+                elegant systems, and the quiet art of making software that works.
+            </p>
+            <div class="hero-actions animate-fade-up delay-3">
+                <a href="https://github.com/{{ site.github_username }}" target="_blank" rel="noopener noreferrer" class="btn btn-primary">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+                    GitHub
+                </a>
+                <a href="#projects" class="btn btn-secondary" data-nav="projects">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+                    Projects
+                </a>
+                <a href="#blog" class="btn btn-secondary" data-nav="blog">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                    Writing
+                </a>
+            </div>
+            <div class="stats-row" id="hero-stats"></div>
+        </div>
+
+        <!-- RECENT 3 WRITINGS -->
+        <div class="reveal">
+            <div class="sec-header">
+                <div>
+                    <h2 class="sec-title">Recent Writing</h2>
+                    <p class="sec-sub">Thoughts, notes, and reflections</p>
+                </div>
+                <a href="#blog" class="sec-action" data-nav="blog">
+                    View all
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                </a>
+            </div>
+            <div class="writings-grid">
+                {% assign recent = site.posts | slice: 0, 3 %}
+                {% for post in recent %}
+                <a href="{{ post.url | relative_url }}" class="writing-card reveal">
+                    <div class="writing-card-num">0{{ forloop.index }}</div>
+                    <div class="writing-card-date">{{ post.date | date: "%b %d, %Y" }}</div>
+                    <h3 class="writing-card-title">{{ post.title }}</h3>
+                    <p class="writing-card-excerpt">{{ post.excerpt | strip_html | truncate: 140 }}</p>
+                    <div class="writing-card-meta">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                        <span>{% assign words = post.content | number_of_words %}{% assign mins = words | divided_by: 220 %}{% if mins < 1 %}1{% else %}{{ mins }}{% endif %} min read</span>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <!-- PROJECTS -->
+    <section id="projects" class="section">
+        <div class="sec-header">
+            <div>
+                <h2 class="sec-title">Projects</h2>
+                <p class="sec-sub">Public repositories on GitHub</p>
+            </div>
+        </div>
+        <div class="controls">
+            <div class="search-wrap">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <input type="text" id="repo-search" class="search-input" placeholder="Search repositories..." aria-label="Search">
+            </div>
+            <div class="sort-wrap">
+                <label for="repo-sort" class="sort-label">Sort</label>
+                <select id="repo-sort" class="sort-select">
+                    <option value="updated">Updated</option>
+                    <option value="stars">Stars</option>
+                    <option value="name">Name</option>
+                    <option value="created">Newest</option>
+                </select>
+            </div>
+        </div>
+        <div id="repos-loading" class="loading"><div class="spinner"></div><p>Fetching repos...</p></div>
+        <div id="repos-error" class="error-box" hidden><p class="error-msg"></p><button class="btn-retry" onclick="window.reposModule.load()">Try again</button></div>
+        <div id="repos-grid" class="repos-grid"></div>
+        <div id="repos-empty" class="empty-box" hidden><p>No repositories match.</p></div>
+    </section>
+
+    <!-- ALL BLOG POSTS -->
+    <section id="blog" class="section">
+        <div class="sec-header">
+            <div>
+                <h2 class="sec-title">All Writing</h2>
+                <p class="sec-sub">Everything I've written</p>
+            </div>
+        </div>
+        <div class="blog-list">
+            {% for post in site.posts %}
+            <a href="{{ post.url | relative_url }}" class="blog-item reveal">
+                <div class="blog-item-date">{{ post.date | date: "%b %d, %Y" }}</div>
+                <h3 class="blog-item-title">{{ post.title }}</h3>
+                <p class="blog-item-excerpt">{{ post.excerpt | strip_html | truncate: 160 }}</p>
+                <div class="blog-item-rt">{% assign words = post.content | number_of_words %}{% assign mins = words | divided_by: 220 %}{% if mins < 1 %}1{% else %}{{ mins }}{% endif %} min read</div>
+            </a>
+            {% endfor %}
+            {% if site.posts.size == 0 %}
+            <div class="empty-box"><p>No posts yet.</p></div>
+            {% endif %}
+        </div>
+    </section>
+
+</main>

@@ -1,0 +1,13 @@
+<header class="site-header">
+    <nav class="nav">
+        <a href="{{ '/' | relative_url }}" class="nav-logo">MT</a>
+        <ul class="nav-links">
+            <li><a href="{{ '/' | relative_url }}" class="nav-link{% unless page.layout == 'post' %} active{% endunless %}" data-nav="home">Home</a></li>
+            <li><a href="{{ '/' | relative_url }}#projects" class="nav-link" data-nav="projects">Projects</a></li>
+            <li><a href="{{ '/' | relative_url }}#blog" class="nav-link{% if page.layout == 'post' %} active{% endif %}" data-nav="blog">Blog</a></li>
+        </ul>
+        <button class="nav-toggle" aria-label="Menu">
+            <svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+    </nav>
+</header>

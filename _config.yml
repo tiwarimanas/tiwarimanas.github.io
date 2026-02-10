@@ -1,0 +1,30 @@
+title: Manas Tiwari
+description: Developer, thinker, builder. Projects and writings.
+author: Manas Tiwari
+url: "https://tiwarimanas.github.io"
+baseurl: ""
+github_username: tiwarimanas
+
+markdown: kramdown
+kramdown:
+  input: GFM
+  math_engine: null
+  syntax_highlighter: none
+
+permalink: /blog/:slug/
+
+defaults:
+  - scope:
+      path: ""
+      type: "posts"
+    values:
+      layout: "post"
+
+include:
+  - _posts
+
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - README.md
+  - LICENSE

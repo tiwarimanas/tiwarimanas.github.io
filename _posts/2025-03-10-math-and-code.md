@@ -1,17 +1,17 @@
 ---
 title: "Where Math Meets Code"
-date: "2025-03-10"
+date: 2025-03-10
+layout: post
+slug: math-and-code
 ---
 
-One of the things I find most beautiful about programming is how naturally it intersects with mathematics. Let me share a few examples.
+One of the things I find most beautiful about programming is how naturally it intersects with mathematics.
 
 ## The Basics
 
 Every programmer knows that the sum of the first $n$ natural numbers is:
 
-$$
-S = \frac{n(n+1)}{2}
-$$
+$$S = \frac{n(n+1)}{2}$$
 
 Gauss figured this out as a child. In code, we might write it naively:
 
@@ -29,9 +29,7 @@ The difference between $O(n)$ and $O(1)$ is the difference between brute force a
 
 Consider what many call the most beautiful equation in mathematics:
 
-$$
-e^{i\pi} + 1 = 0
-$$
+$$e^{i\pi} + 1 = 0$$
 
 Five fundamental constants — $e$, $i$, $\pi$, $1$, and $0$ — connected in a single elegant expression.
 
@@ -39,9 +37,7 @@ Five fundamental constants — $e$, $i$, $\pi$, $1$, and $0$ — connected in a 
 
 When solving $ax^2 + bx + c = 0$, we reach for:
 
-$$
-x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}
-$$
+$$x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}$$
 
 The discriminant $\Delta = b^2 - 4ac$ tells us everything about the nature of the roots.
 
@@ -49,9 +45,7 @@ The discriminant $\Delta = b^2 - 4ac$ tells us everything about the nature of th
 
 In machine learning, the sigmoid function maps any real number to $(0, 1)$:
 
-$$
-\sigma(x) = \frac{1}{1 + e^{-x}}
-$$
+$$\sigma(x) = \frac{1}{1 + e^{-x}}$$
 
 ```javascript
 function sigmoid(x) {
@@ -65,9 +59,7 @@ Its derivative has a beautiful property: $\sigma'(x) = \sigma(x)(1 - \sigma(x))$
 
 For two matrices $A$ and $B$, the element at position $(i, j)$ in the product $C = AB$ is:
 
-$$
-C_{ij} = \sum_{k=1}^{n} A_{ik} B_{kj}
-$$
+$$C_{ij} = \sum_{k=1}^{n} A_{ik} B_{kj}$$
 
 This simple formula is the backbone of modern deep learning.
 

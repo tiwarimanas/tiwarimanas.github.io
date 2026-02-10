@@ -1,6 +1,8 @@
 ---
 title: "On Building Things"
-date: "2025-02-01"
+date: 2025-02-01
+layout: post
+slug: on-building-things
 ---
 
 There's a particular kind of satisfaction that comes from building something from scratch. Not because it's the most efficient approach — it rarely is — but because of what you learn along the way.
@@ -29,7 +31,7 @@ I'm not advocating for reinventing every wheel. But I do think there's value in 
 
 ## Small Things, Done Well
 
-This website is one of those from-scratch things. It's a static site with no dependencies. The Markdown parser is hand-written. The CSS is vanilla.
+This website is one of those from-scratch things. It's a static site with no heavy dependencies. The CSS is vanilla. And it's been more educational than any tutorial.
 
 Sometimes the best project is the one that teaches you the most, not the one that ships the fastest.
 

@@ -1,6 +1,8 @@
 ---
-title: "aaaaaaaaaa"
-date: "2025-01-15"
+title: "Hello, World"
+date: 2025-01-15
+layout: post
+slug: hello-world
 ---
 
 This is the beginning. Every journey starts somewhere, and for this blog — this quiet little corner of the internet — it starts here.
@@ -21,7 +23,7 @@ I'll write about things that interest me:
 
 ## The Setup
 
-This blog is deliberately simple. Markdown files in a folder, rendered by a handful of JavaScript functions. No build steps, no frameworks, no dependencies. Just words on a page.
+This blog is deliberately simple. Markdown files rendered by Jekyll. No complex build steps, no heavy frameworks. Just words on a page.
 
 ```javascript
 const greeting = "Hello, World";
