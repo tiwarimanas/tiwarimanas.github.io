@@ -2,15 +2,44 @@ var BlogModule = (function() {
     "use strict";
     var posts = [];
 
+    // FIXED: Resolve base path for GitHub Pages
+    // On GitHub Pages: https://tiwarimanas.github.io/
+    // On GitHub Pages with repo name: https://tiwarimanas.github.io/reponame/
+    // Locally: http://localhost:8080/ or file:///path/
     function getBase() {
-        var b = window.location.protocol + "//" + window.location.host + window.location.pathname;
-        if (b.match(/\/[^\/]+\.[^\/]+$/)) b = b.replace(/\/[^\/]+$/, "/");
-        if (b.charAt(b.length - 1) !== "/") b += "/";
-        return b;
+        // Use document.baseURI or build from location
+        var loc = window.location;
+        var path = loc.pathname;
+
+        // Remove any filename at the end (e.g., /index.html, /blog.html)
+        var lastSlash = path.lastIndexOf("/");
+        var afterSlash = path.substring(lastSlash + 1);
+
+        // If the last segment has a dot, it's a file — strip it
+        if (afterSlash.indexOf(".") !== -1) {
+            path = path.substring(0, lastSlash + 1);
+        } else {
+            // Ensure trailing slash
+            if (path.charAt(path.length - 1) !== "/") {
+                path = path + "/";
+            }
+        }
+
+        return loc.protocol + "//" + loc.host + path;
     }
 
-    function fileUrl(f) { return getBase() + "me/" + f; }
-    function indexUrl() { return getBase() + "me/index.json"; }
+    function fileUrl(f) {
+        return getBase() + "me/" + f;
+    }
+
+    function indexUrl() {
+        return getBase() + "me/index.json";
+    }
+
+    function blogPageUrl(slug) {
+        return getBase() + "blog.html?post=" + encodeURIComponent(slug);
+    }
+
     function show(e) { if (e) e.hidden = false; }
     function hide(e) { if (e) e.hidden = true; }
 
@@ -21,8 +50,12 @@ var BlogModule = (function() {
     }
 
     function enrichPost(post) {
-        return fetch(fileUrl(post.file))
-            .then(function(r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.text(); })
+        var url = fileUrl(post.file);
+        return fetch(url)
+            .then(function(r) {
+                if (!r.ok) throw new Error("HTTP " + r.status + " for " + url);
+                return r.text();
+            })
             .then(function(md) {
                 var p = MarkdownParser.extractFrontMatter(md);
                 post.title = p.meta.title || post.title || "Untitled";
@@ -31,7 +64,8 @@ var BlogModule = (function() {
                 post.readingTime = MarkdownParser.readingTime(p.content);
                 post.slug = post.slug || post.file.replace(".md", "");
             })
-            .catch(function() {
+            .catch(function(err) {
+                console.warn("[Blog] enrich failed for " + post.file + ":", err.message);
                 post.slug = post.slug || post.file.replace(".md", "");
             });
     }
@@ -45,8 +79,9 @@ var BlogModule = (function() {
         for (var i = 0; i < recent.length; i++) {
             var p = recent[i];
             var num = "0" + (i + 1);
+            var href = blogPageUrl(p.slug);
             h.push(
-                '<a href="blog.html?post=' + encodeURIComponent(p.slug) + '" class="writing-card reveal">' +
+                '<a href="' + href + '" class="writing-card reveal">' +
                 '<div class="writing-card-num">' + num + '</div>' +
                 '<div class="writing-card-date">' + fmtDate(p.date) + '</div>' +
                 '<h3 class="writing-card-title">' + (p.title || "Untitled") + '</h3>' +
@@ -57,13 +92,11 @@ var BlogModule = (function() {
             );
         }
         container.innerHTML = h.join("");
-        observeReveals();
+        if (typeof observeReveals === "function") observeReveals();
     }
 
     function renderBlogList() {
         var listEl = document.getElementById("blog-list");
-        var loadEl = document.getElementById("blog-loading");
-        var errEl = document.getElementById("blog-error");
         if (!listEl) return;
 
         if (posts.length === 0) {
@@ -74,8 +107,9 @@ var BlogModule = (function() {
         var h = [];
         for (var i = 0; i < posts.length; i++) {
             var p = posts[i];
+            var href = blogPageUrl(p.slug);
             h.push(
-                '<a href="blog.html?post=' + encodeURIComponent(p.slug) + '" class="blog-item reveal">' +
+                '<a href="' + href + '" class="blog-item reveal">' +
                 '<div class="blog-item-date">' + fmtDate(p.date) + '</div>' +
                 '<h3 class="blog-item-title">' + (p.title || "Untitled") + '</h3>' +
                 (p.excerpt ? '<p class="blog-item-excerpt">' + p.excerpt + '</p>' : '') +
@@ -84,23 +118,34 @@ var BlogModule = (function() {
             );
         }
         listEl.innerHTML = h.join("");
-        observeReveals();
+        if (typeof observeReveals === "function") observeReveals();
     }
 
     function load(callback) {
-        fetch(indexUrl())
-            .then(function(r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+        var url = indexUrl();
+        console.log("[Blog] Fetching index:", url);
+
+        fetch(url)
+            .then(function(r) {
+                if (!r.ok) throw new Error("HTTP " + r.status + " fetching " + url);
+                return r.json();
+            })
             .then(function(data) {
                 posts = (data && data.posts) ? data.posts : [];
                 posts.sort(function(a, b) { return new Date(b.date || 0) - new Date(a.date || 0); });
-                for (var i = 0; i < posts.length; i++) posts[i].slug = posts[i].slug || posts[i].file.replace(".md", "");
+                for (var i = 0; i < posts.length; i++) {
+                    posts[i].slug = posts[i].slug || posts[i].file.replace(".md", "");
+                }
 
                 var promises = [];
-                for (var j = 0; j < posts.length; j++) promises.push(enrichPost(posts[j]));
+                for (var j = 0; j < posts.length; j++) {
+                    promises.push(enrichPost(posts[j]));
+                }
                 return Promise.all(promises);
             })
             .then(function() {
                 posts.sort(function(a, b) { return new Date(b.date || 0) - new Date(a.date || 0); });
+                console.log("[Blog] Loaded " + posts.length + " posts");
                 if (callback) callback(null, posts);
             })
             .catch(function(err) {

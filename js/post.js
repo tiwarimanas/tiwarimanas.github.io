@@ -4,15 +4,27 @@
     var speechUtterance = null;
     var isSpeaking = false;
 
+    // FIXED: Same base path logic as blog.js
     function getBase() {
-        var b = window.location.protocol + "//" + window.location.host + window.location.pathname;
-        if (b.match(/\/[^\/]+\.[^\/]+$/)) b = b.replace(/\/[^\/]+$/, "/");
-        if (b.charAt(b.length - 1) !== "/") b += "/";
-        return b;
+        var loc = window.location;
+        var path = loc.pathname;
+        var lastSlash = path.lastIndexOf("/");
+        var afterSlash = path.substring(lastSlash + 1);
+
+        if (afterSlash.indexOf(".") !== -1) {
+            path = path.substring(0, lastSlash + 1);
+        } else {
+            if (path.charAt(path.length - 1) !== "/") {
+                path = path + "/";
+            }
+        }
+
+        return loc.protocol + "//" + loc.host + path;
     }
 
     function fileUrl(f) { return getBase() + "me/" + f; }
     function indexUrl() { return getBase() + "me/index.json"; }
+    function homeUrl() { return getBase() + "index.html"; }
 
     function getSlug() {
         var params = new URLSearchParams(window.location.search);
@@ -72,7 +84,7 @@
         if (btn) btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>Pause';
     }
 
-    // PDF download
+    // PDF
     function downloadPDF() {
         var title = document.getElementById("post-title");
         var content = document.getElementById("post-content");
@@ -92,10 +104,9 @@
             'h1{font-size:28px;font-weight:500;margin-bottom:8px;letter-spacing:-0.02em}' +
             '.meta{font-size:13px;color:#888;margin-bottom:32px;padding-bottom:16px;border-bottom:1px solid #eee}' +
             'h2{font-size:22px;margin-top:32px}h3{font-size:18px;margin-top:24px}' +
-            'p{font-weight:300;margin:12px 0}' +
-            'strong{font-weight:600}' +
+            'p{font-weight:300;margin:12px 0}strong{font-weight:600}' +
             'blockquote{border-left:3px solid #8B5E3C;padding:8px 16px;margin:16px 0;color:#555;font-style:italic;background:#faf6f1;border-radius:0 8px 8px 0}' +
-            'code{font-family:"JetBrains Mono",monospace;font-size:0.85em;background:#f3f1ed;padding:2px 6px;border-radius:4px}' +
+            'code{font-family:monospace;font-size:0.85em;background:#f3f1ed;padding:2px 6px;border-radius:4px}' +
             'pre{background:#1e1e1e;color:#d4d4d4;padding:16px;border-radius:10px;overflow-x:auto;font-size:14px;line-height:1.6}' +
             'pre code{background:none;padding:0;color:inherit}' +
             'ul,ol{padding-left:24px}li{margin:6px 0;font-weight:300}' +
@@ -112,37 +123,46 @@
         setTimeout(function() { printWin.print(); }, 600);
     }
 
-    // Share functions
+    // Share
     function shareTwitter() {
         var title = document.getElementById("post-title");
         var t = title ? title.textContent : document.title;
-        var url = window.location.href;
-        window.open("https://twitter.com/intent/tweet?text=" + encodeURIComponent(t) + "&url=" + encodeURIComponent(url), "_blank", "width=550,height=420");
+        window.open("https://twitter.com/intent/tweet?text=" + encodeURIComponent(t) + "&url=" + encodeURIComponent(window.location.href), "_blank", "width=550,height=420");
     }
 
     function shareLinkedIn() {
-        var url = window.location.href;
-        window.open("https://www.linkedin.com/sharing/share-offsite/?url=" + encodeURIComponent(url), "_blank", "width=550,height=420");
+        window.open("https://www.linkedin.com/sharing/share-offsite/?url=" + encodeURIComponent(window.location.href), "_blank", "width=550,height=420");
     }
 
     function shareInstagram() {
-        // Instagram doesn't have a direct share URL — copy link instead
-        navigator.clipboard.writeText(window.location.href).then(function() {
-            showToast("Link copied! Paste in Instagram");
-        }).catch(function() {
-            showToast("Could not copy link");
-        });
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(window.location.href).then(function() {
+                showToast("Link copied! Paste in Instagram");
+            }).catch(function() { fallbackCopy(); });
+        } else { fallbackCopy(); }
     }
 
     function copyLink() {
-        navigator.clipboard.writeText(window.location.href).then(function() {
-            showToast("Link copied to clipboard!");
-        }).catch(function() {
-            showToast("Could not copy link");
-        });
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(window.location.href).then(function() {
+                showToast("Link copied to clipboard!");
+            }).catch(function() { fallbackCopy(); });
+        } else { fallbackCopy(); }
     }
 
-    // Load and render post
+    function fallbackCopy() {
+        var ta = document.createElement("textarea");
+        ta.value = window.location.href;
+        ta.style.position = "fixed";
+        ta.style.opacity = "0";
+        document.body.appendChild(ta);
+        ta.select();
+        try { document.execCommand("copy"); showToast("Link copied!"); }
+        catch(e) { showToast("Could not copy link"); }
+        document.body.removeChild(ta);
+    }
+
+    // FIXED: Load post with correct paths
     function loadPost() {
         var slug = getSlug();
         var loadingEl = document.getElementById("post-loading-state");
@@ -156,18 +176,29 @@
             return;
         }
 
-        fetch(indexUrl())
-            .then(function(r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+        var idxUrl = indexUrl();
+        console.log("[Post] Fetching index:", idxUrl);
+        console.log("[Post] Looking for slug:", slug);
+
+        fetch(idxUrl)
+            .then(function(r) {
+                if (!r.ok) throw new Error("Could not load post index (HTTP " + r.status + "). URL: " + idxUrl);
+                return r.json();
+            })
             .then(function(data) {
-                var posts = (data && data.posts) ? data.posts : [];
+                var allPosts = (data && data.posts) ? data.posts : [];
                 var post = null;
-                for (var i = 0; i < posts.length; i++) {
-                    var s = posts[i].slug || posts[i].file.replace(".md", "");
-                    if (s === slug) { post = posts[i]; break; }
+                for (var i = 0; i < allPosts.length; i++) {
+                    var s = allPosts[i].slug || allPosts[i].file.replace(".md", "");
+                    if (s === slug) { post = allPosts[i]; break; }
                 }
                 if (!post) throw new Error("Post not found: " + slug);
-                return fetch(fileUrl(post.file)).then(function(r) {
-                    if (!r.ok) throw new Error("HTTP " + r.status + " loading " + post.file);
+
+                var mdUrl = fileUrl(post.file);
+                console.log("[Post] Fetching markdown:", mdUrl);
+
+                return fetch(mdUrl).then(function(r) {
+                    if (!r.ok) throw new Error("Could not load post file (HTTP " + r.status + "). URL: " + mdUrl);
                     return r.text();
                 });
             })
@@ -194,7 +225,7 @@
                 if (articleEl) articleEl.style.display = "block";
                 if (toolbarEl) toolbarEl.style.display = "flex";
 
-                // Render math with KaTeX if available
+                // Render math with KaTeX if loaded
                 renderMath();
             })
             .catch(function(err) {
@@ -209,22 +240,65 @@
     }
 
     function renderMath() {
+        if (typeof katex === "undefined") {
+            // KaTeX may still be loading (defer), retry once
+            setTimeout(function() {
+                if (typeof katex !== "undefined") doRenderMath();
+            }, 500);
+            return;
+        }
+        doRenderMath();
+    }
+
+    function doRenderMath() {
         if (typeof katex === "undefined") return;
-        // Block math
+
         var blocks = document.querySelectorAll(".math-block[data-math]");
         for (var i = 0; i < blocks.length; i++) {
             var raw = blocks[i].getAttribute("data-math");
             var expr = raw.replace(/^\$\$/, "").replace(/\$\$$/, "").trim();
-            try { katex.render(expr, blocks[i], { displayMode: true, throwOnError: false }); }
-            catch (e) { console.warn("KaTeX error:", e); }
+            if (expr) {
+                try { katex.render(expr, blocks[i], { displayMode: true, throwOnError: false }); }
+                catch (e) { console.warn("KaTeX block error:", e); }
+            }
         }
-        // Inline math
+
         var inlines = document.querySelectorAll(".math-inline[data-math]");
         for (var j = 0; j < inlines.length; j++) {
             var rawI = inlines[j].getAttribute("data-math");
             var exprI = rawI.replace(/^\$/, "").replace(/\$$/, "").trim();
-            try { katex.render(exprI, inlines[j], { displayMode: false, throwOnError: false }); }
-            catch (e) { console.warn("KaTeX error:", e); }
+            if (exprI) {
+                try { katex.render(exprI, inlines[j], { displayMode: false, throwOnError: false }); }
+                catch (e) { console.warn("KaTeX inline error:", e); }
+            }
+        }
+    }
+
+    // FIXED: Update back links to use correct base
+    function fixBackLinks() {
+        var base = getBase();
+
+        // Fix the back button in toolbar
+        var backBtn = document.querySelector(".post-back");
+        if (backBtn) backBtn.setAttribute("href", base + "index.html#blog");
+
+        // Fix the error state back link
+        var errBack = document.querySelector("#post-error-state a");
+        if (errBack) errBack.setAttribute("href", base + "index.html#blog");
+
+        // Fix nav links
+        var navLinks = document.querySelectorAll(".nav-link, .nav-logo");
+        for (var i = 0; i < navLinks.length; i++) {
+            var el = navLinks[i];
+            var href = el.getAttribute("href") || "";
+
+            if (href === "index.html" || href === "./index.html") {
+                el.setAttribute("href", base + "index.html");
+            } else if (href === "index.html#projects" || href === "./index.html#projects") {
+                el.setAttribute("href", base + "index.html#projects");
+            } else if (href === "index.html#blog" || href === "./index.html#blog") {
+                el.setAttribute("href", base + "index.html#blog");
+            }
         }
     }
 
@@ -236,6 +310,9 @@
                 header.classList.toggle("scrolled", window.scrollY > 10);
             }, { passive: true });
         }
+
+        // Fix all navigation links for GitHub Pages
+        fixBackLinks();
 
         // Toolbar buttons
         var btnTTS = document.getElementById("btn-tts");
@@ -251,6 +328,11 @@
         if (btnLinkedIn) btnLinkedIn.addEventListener("click", shareLinkedIn);
         if (btnIG) btnIG.addEventListener("click", shareInstagram);
         if (btnCopy) btnCopy.addEventListener("click", copyLink);
+
+        // Cancel TTS when leaving page
+        window.addEventListener("beforeunload", function() {
+            if (isSpeaking && window.speechSynthesis) window.speechSynthesis.cancel();
+        });
 
         loadPost();
     }
